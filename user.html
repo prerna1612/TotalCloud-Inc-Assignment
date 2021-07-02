@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="conatiner">
+        <div class="wrapper">
+            <div class="header">Display Employee Details </div>
+            <div class="cards_wrap">
+                <div class="card_item">
+                    <!-- <div class="card_inner"> -->
+                </div>
+            </div>
+        </div>
+        <center>
+        <ul id="charactersList"></ul>
+    </center>
+    </div>
+
+    <script>
+   
+          
+
+ var url="https://reqres.in/api/users?page=1";
+ init();
+ function getParams(){
+      var idx = document.URL.indexOf('?');
+      var params = new Array();
+      if (idx != -1) {
+          var pairs = document.URL.substring(idx+1, document.URL.length).split('&');
+          for (var i=0; i<pairs.length; i++){
+             var nameVal = pairs[i].split('=');
+              params[nameVal[0]] = nameVal[1];
+          }
+      }
+      return params;
+  }
+
+  function init()
+  {
+      let email=getParams();
+      email=email['email'];
+      email=email.replaceAll("+","").trim();
+       email=email.replace("%40","@");
+    fetch(url).then(res=>
+    {
+        return res.json();
+    }).then((data)=>
+    {
+        let emails=new Array();
+          data.data.map((d,i)=>
+          {
+              emails[i]=d.email;
+          })
+          let flag=0;
+          console.log(emails);
+          console.log(email);
+          let similarEmails=new Array();
+          for(let i=0;i<emails.length;i++)
+          {
+              if(emails[i].includes(email)||emails[i]==email)
+              {
+                 console.log("found"); 
+                 similarEmails.push(i); 
+              }
+          }
+          if(similarEmails.length==0)
+          {
+            document.getElementById("charactersList").innerHTML="User not found";
+          }
+          else{
+        
+            let user= similarEmails.map((i)=>
+            {
+                return `<div class="user">
+                <p><img src="${data.data[i].avatar}" alt="${data.data[i].first_name}"/></p>
+                <p> First Name : ${data.data[i].first_name}</p>
+                <p> Last Name : ${data.data[i].last_name}</p>
+                <p> Email : ${data.data[i].email}</p>
+                </div>
+                `;
+            }).join("");
+                document.getElementById("charactersList").innerHTML=user;
+    
+
+
+          }
+
+    })
+
+  }
+
+    </script>
+</body>
+</html>
